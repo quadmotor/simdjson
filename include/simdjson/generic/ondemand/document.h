@@ -263,6 +263,30 @@ public:
   /** @overload simdjson_really_inline simdjson_result<value> find_field_unordered(std::string_view key) & noexcept; */
   simdjson_really_inline simdjson_result<value> operator[](const char *key) & noexcept;
 
+  /**
+   * Get the raw JSON for this token.
+   *
+   * The string_view will always point into the input buffer.
+   *
+   * The string_view will start at the beginning of the token, and include the entire token
+   * *as well as all spaces until the next token (or EOF).* This means, for example, that a
+   * string token always begins with a " and is always terminated by the final ", possibly
+   * followed by a number of spaces.
+   *
+   * The string_view is *not* null-terminated. If this is a scalar (string, number,
+   * boolean, or null), the character after the end of the string_view may be the padded buffer.
+   *
+   * Tokens include:
+   * - {
+   * - [
+   * - "a string (possibly with UTF-8 or backslashed characters like \\\")".
+   * - -1.2e-100
+   * - true
+   * - false
+   * - null
+   */
+  simdjson_really_inline simdjson_result<std::string_view> raw_json_token() noexcept;
+
 protected:
   simdjson_really_inline document(ondemand::json_iterator &&iter) noexcept;
   simdjson_really_inline const uint8_t *text(uint32_t idx) const noexcept;
@@ -337,6 +361,9 @@ public:
   simdjson_really_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::value> operator[](const char *key) & noexcept;
   simdjson_really_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::value> find_field_unordered(std::string_view key) & noexcept;
   simdjson_really_inline simdjson_result<SIMDJSON_IMPLEMENTATION::ondemand::value> find_field_unordered(const char *key) & noexcept;
+
+  /** @copydoc simdjson_really_inline std::string_view document::raw_json_token() const noexcept */
+  simdjson_really_inline simdjson_result<std::string_view> raw_json_token() noexcept;
 };
 
 } // namespace simdjson
